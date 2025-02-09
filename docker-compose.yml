@@ -1,0 +1,53 @@
+volumes:
+  kong_data: {}
+
+networks:
+  kong-net:
+    external: false
+
+services:
+  kong:
+    container_name: kong-test
+    build: .
+    user: 'root'
+    platform: linux/amd64
+    environment:
+      KONG_DECLARATIVE_CONFIG: /opt/conf/kong.yml
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: '0.0.0.0:8001'
+      KONG_DATABASE: 'off'
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_PLUGINS: kong-to-waf
+    networks:
+      - kong-net
+    ports:
+      - "8000:8000/tcp"
+      - "127.0.0.1:8001:8001/tcp"
+      - "8443:8443/tcp"
+      - "127.0.0.1:8444:8444/tcp"
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    restart: on-failure
+    depends_on:
+      - waf
+    volumes:
+      - .:/opt/conf/
+    command: sh /opt/conf/run.sh
+
+  waf:
+    container_name: waf-mock
+    build:
+      context: ./tests/integration
+      dockerfile: waf-mock.Dockerfile
+    networks:
+      - kong-net
+    expose:
+      - "80"
+    volumes:
+      - ./tests/integration:/app
+    command: uvicorn waf-mock:app --port=80 --host=0.0.0.0 --reload
