@@ -14,8 +14,10 @@ return {
                 { waf_host = { type = "string", default = "localhost" } },
                 { waf_port = { type = "number", default = 80 } },
                 { waf_uri = { type = "string", required = false } },
-                { waf_timeout = { type = "number", default = 10000 } },
-                { waf_keepalive = { type = "number", default = 60000 } },
+                { waf_connect_timeout = { type = "number", default = 500 } },
+                { waf_send_timeout = { type = "number", default = 500 } },
+                { waf_read_timeout = { type = "number", default = 1000 } },
+                { waf_keepalive = { type = "number", default = 30000 } },
                 { waf_conn_pool_size = { type = "number", default = 6 } },
                 -- TODO: Add track ID
             },
