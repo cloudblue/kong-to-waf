@@ -1,12 +1,12 @@
 package = "kong-to-waf"
 
-version = "1.0.0-1"
+version = "1.0.1-1"
 
 supported_platforms = {"linux", "macosx"}
 
 source = {
   url = "git://github.com/cloudblue/kong-to-waf",
-  tag = "1.0.0"
+  tag = "1.0.1"
 }
 
 description = {

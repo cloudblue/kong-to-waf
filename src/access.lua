@@ -17,11 +17,15 @@ local function call_waf(config)
     local path = config.waf_uri or ""
 
     local httpc = http.new()
-    httpc:set_timeout(config.waf_timeout)
+    httpc:set_timeouts(config.waf_connect_timeout, config.waf_send_timeout, config.waf_read_timeout)
     ok, err = httpc:connect(host, port, {pool_size = config.waf_conn_pool_size})
     if not ok then
-        kong.log.err('Failed to connect to WAF service')
-        return
+        kong.log.err('Failed to connect to WAF service... Attempt 1')
+        ok, err = httpc:connect(host, port, {pool_size = config.waf_conn_pool_size})
+        if not ok then
+            kong.log.err('Failed to connect to WAF service... Attempt 2')
+            return
+        end
     end
 
     local headers = kong.request.get_headers()

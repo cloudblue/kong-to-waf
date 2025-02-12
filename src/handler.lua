@@ -2,7 +2,7 @@ local access = require "kong.plugins.kong-to-waf.access"
 
 
 local KongToWAF = {
-    VERSION = "1.0.0",
+    VERSION = "1.0.1",
     PRIORITY = 1090
 }
 
